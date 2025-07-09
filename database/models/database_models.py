@@ -1,18 +1,9 @@
 from typing import List
 
 from sqlalchemy import Integer, Column, String
-from sqlalchemy.orm import DeclarativeBase, declared_attr, mapped_column, Mapped, relationship
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-
-class _BaseModel(DeclarativeBase):
-    """
-    Base model class, that creates connection with DataBase
-    """
-    __abstract__ = True
-
-    @declared_attr
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower()
+from database.models._base_model import _BaseModel
 
 
 class Company(_BaseModel):
@@ -66,3 +57,4 @@ class CompanyActivities(_BaseModel):
     id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
     name: Mapped[str]
     organisations: Mapped[List["Company"]] = relationship(back_populates="activities")
+
