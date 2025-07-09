@@ -50,11 +50,24 @@ class ObjectCoordinates(_BaseModel):
     building: Mapped["Buildings"] = relationship(back_populates="coordinates")
 
 
-class CompanyActivities(_BaseModel):
+class CompanyName(_BaseModel):
     """
-    Деятельность компании
+    Company name table
     """
     id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
     name: Mapped[str]
+
+
+class CompanyActivities(_BaseModel):
+    """
+    Company activities table
+    """
+    id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
+    name_id: Mapped["CompanyName"] = relationship(back_populates="id")
     organisations: Mapped[List["Company"]] = relationship(back_populates="activities")
+    # Решение проблемы вложенности компаний - теперь есть родительский ID деятельности компании.
+    # Если это первый уровень, то значение 0.
+    parent_activity_id: Mapped[int] = mapped_column(Integer, default=0)
+
+
 
