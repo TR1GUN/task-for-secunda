@@ -17,25 +17,15 @@ class Company(_BaseModel):
     activities: Mapped['CompanyActivities'] = relationship(back_populates="organisations")
 
 
-class Buildings(_BaseModel):
-    """
-    Здание
-    """
-    id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
-    address: Mapped["Address"] = relationship(back_populates="building")
-    coordinates: Mapped["ObjectCoordinates"] = relationship(back_populates="building")
-    organisations: Mapped[List["Company"]] = relationship(back_populates="building")
-
-
 class Address(_BaseModel):
     """
-    Адресс
+    Building address table
     """
     id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
     address_city: Mapped[str]
     address_street: Mapped[str]
     address_number: Mapped[str] = Column(String(), unique=True)
-    building: Mapped[str] = relationship(back_populates="address")
+    building: Mapped[str] = relationship(back_populates="address_id")
 
 
 class ObjectCoordinates(_BaseModel):
@@ -48,6 +38,18 @@ class ObjectCoordinates(_BaseModel):
     coordinate_x: Mapped[float]
     coordinate_y: Mapped[float]
     building: Mapped["Buildings"] = relationship(back_populates="coordinates")
+
+
+class Buildings(_BaseModel):
+    """
+    Buildings table
+    """
+    id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
+    # Решил проблему с адресом - Теперь он уникальный
+    address_id: Mapped[int] = mapped_column(Integer, unique=True)
+    address: Mapped["Address"] = relationship(back_populates="building")
+    coordinates: Mapped["ObjectCoordinates"] = relationship(back_populates="building")
+    organisations: Mapped[List["Company"]] = relationship(back_populates="building")
 
 
 class CompanyName(_BaseModel):
