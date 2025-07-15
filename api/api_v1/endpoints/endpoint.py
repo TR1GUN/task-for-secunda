@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import models
+from database.models import database_models as models
 from database.setup_db import DataBase
 from api.api_v1.schemas.handbook import (
     CompaniesInfoModel,
@@ -19,14 +19,14 @@ from api.deps.company import get_company_by_name
 
 from database.database_transactions import building as transactions_building, company as transactions_company
 
-route = APIRouter()
+organisation_route = APIRouter(prefix='/organisation')
 
 
-@route.post('organisation/building/')
+@organisation_route.post('/organisation/building', response_model=ListCompaniesInBuilding)
 async def get_organisation_in_building(
         building: models.Buildings = Depends(get_building_by_address),
         session: AsyncSession = Depends(DataBase.scoped_session_dependency)
-) -> ListCompaniesInBuilding:
+):
     """
     List of all companies located in the building at a given address
     """
@@ -39,7 +39,7 @@ async def get_organisation_in_building(
     )
 
 
-@route.get('organisation/type_activity/{activity}')
+@organisation_route.get('organisation/type_activity/{activity}')
 async def get_all_organisation_for_activity(
         activity: models.CompanyActivities = Depends(get_company_activities),
         session: AsyncSession = Depends(DataBase.scoped_session_dependency), ) -> ListCompaniesToActivity:
@@ -56,7 +56,7 @@ async def get_all_organisation_for_activity(
     )
 
 
-@route.post('organisation/place')
+@organisation_route.post('organisation/place')
 async def get_organisation_in_place(points: CoordinatesPlaceModel, session: AsyncSession = Depends(
     DataBase.scoped_session_dependency)) -> ListCompaniesToPlacesModel:
     """
@@ -71,7 +71,7 @@ async def get_organisation_in_place(points: CoordinatesPlaceModel, session: Asyn
     )
 
 
-@route.get('organisation/info/{idx}')
+@organisation_route.get('organisation/info/{idx}')
 async def get_organisation_info(
         idx: int, session: AsyncSession = Depends(DataBase.scoped_session_dependency)
 ) -> CompaniesInfoModel:
@@ -86,7 +86,7 @@ async def get_organisation_info(
     )
 
 
-@route.post('organisation/search/activity/{activity}')
+@organisation_route.post('organisation/search/activity/{activity}')
 async def search_company_by_activity(company_activities: list[models.CompanyActivities] = Depends(get_activities_with_companies))-> ListCompaniesToActivityModel :
     """
     искать организации по виду деятельности.
@@ -118,7 +118,7 @@ async def search_company_by_activity(company_activities: list[models.CompanyActi
     )
 
 
-@route.post('company/search/name/{name_company}')
+@organisation_route.post('company/search/name/{name_company}')
 async def search_company_by_name(company: models.Company = Depends(get_company_by_name)) -> CompanyModel:
     """
     Search company by name

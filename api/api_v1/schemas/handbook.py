@@ -1,6 +1,14 @@
 import pydantic
 
 
+class CompanyActivities(pydantic.BaseModel):
+    """
+    Company activities table
+    """
+    name: str
+    parent_activity_id: int
+
+
 class AddressModel(pydantic.BaseModel):
     address_city: str
     address_street: str
@@ -36,6 +44,15 @@ class CoordinateModel(pydantic.BaseModel):
     coordinate_y: float
 
 
+class BuildingsModel(pydantic.BaseModel):
+    """
+    Buildings table
+    """
+    # id: int
+    address: AddressModel
+    coordinates: CoordinateModel
+
+
 class CoordinatesPlaceModel(pydantic.BaseModel):
     a1: CoordinateModel
     a2: CoordinateModel
@@ -46,6 +63,16 @@ class CoordinatesPlaceModel(pydantic.BaseModel):
 class FullAddressModel(AddressModel):
     coordinate: CoordinateModel
 
+
+class CompanyModelWithActivities(pydantic.BaseModel):
+    """
+    Организации
+    """
+    # id: int
+    name: str
+    phone_number: str
+    building: BuildingsModel
+    activities: CompanyActivities
 
 class CompaniesInfoWithAddressModel(pydantic.BaseModel):
     name: str

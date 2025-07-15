@@ -1,12 +1,13 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.api_v1.schemas.handbook import AddressModel
 from database.database_transactions.company import get_company_by_name as db_get_company_by_name
-from database import models
+from database.models import database_models as models
+from database.setup_db import DataBase
 
 
-async def get_company_by_name(session: AsyncSession, name_company: str) -> models.Company:
+async def get_company_by_name(name_company: str, session: AsyncSession = Depends(DataBase.scoped_session_dependency)) -> models.Company:
     company = await db_get_company_by_name(session=session, name=name_company)
     if not company:
         raise HTTPException(

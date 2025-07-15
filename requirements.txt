@@ -1,3 +1,5 @@
 fastapi
 pydantic
+aiosqlite
+uvicorn
 sqlalchemy==2.0.41
